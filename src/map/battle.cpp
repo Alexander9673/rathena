@@ -8876,6 +8876,8 @@ static const struct _battle_data {
 	{ "min_shop_sell",                      &battle_config.min_shop_sell,                   0,      0,      INT_MAX,        },
 	{ "feature.equipswitch",                &battle_config.feature_equipswitch,             1,      0,      1,              },
 	{ "pet_walk_speed",                     &battle_config.pet_walk_speed,                  1,      1,      3,              },
+	{ "feature.refineui",                   &battle_config.feature_refineui,                3,      0,      3,              },
+=======
 	{ "blacksmith_fame_refine_threshold",   &battle_config.blacksmith_fame_refine_threshold,10,     1,      MAX_REFINE,     },
 	{ "mob_nopc_idleskill_rate",            &battle_config.mob_nopc_idleskill_rate,         100,    0,    100,              },
 	{ "mob_nopc_move_rate",                 &battle_config.mob_nopc_move_rate,              100,    0,    100,              },
@@ -8885,7 +8887,6 @@ static const struct _battle_data {
 	{ "devotion_standup_fix",               &battle_config.devotion_standup_fix,            1,      0,      1,              },
 	{ "feature.bgqueue",                    &battle_config.feature_bgqueue,                 1,      0,      1,              },
 	{ "homunculus_exp_gain",                &battle_config.homunculus_exp_gain,             10,     0,      100,            },
-
 #include "../custom/battle_config_init.inc"
 };
 
@@ -9030,6 +9031,19 @@ void battle_adjust_conf()
 	if (battle_config.feature_pet_autofeed) {
 		ShowWarning("conf/battle/feature.conf pet auto feed is enabled but it requires PACKETVER 2014-10-08 or newer, disabling...\n");
 		battle_config.feature_pet_autofeed = 0;
+	}
+#endif
+
+#if PACKETVER < 20161012
+	if (battle_config.feature_refineui) {
+		ShowWarning("conf/battle/feature.conf refine UI is enabled but it requires PACKETVER 2016-10-12 or newer, disabling...\n");
+		battle_config.feature_refineui = 0;
+	}
+#else
+	// Check if Refine UI is only enabled in scripts
+	if( battle_config.feature_refineui == 2 ){
+		ShowWarning("conf/battle/feature.conf refine UI is enabled in scripts but disabled in general, enabling...\n");
+		battle_config.feature_refineui = 3;
 	}
 #endif
 
